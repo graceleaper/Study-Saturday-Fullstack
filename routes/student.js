@@ -28,11 +28,42 @@ router.put("/:id", function(req, res, next) {
     .catch(next);
 });
 
+//initial post request
+// router.post("/", async (req, res, next) => {
+//   try {
+//     // console.log('made it to route')
+//     const newStudent = await Student.create(req.body);
+//     // console.log(newStudent)
+//     const test = {
+//       subject: 'English',
+//       grade: 88,
+//       studentId: newStudent.id
+//     };
+//     await Test.create(test);
+//     res.json(newStudent); //send student eagerloaded with the test?
+//   } catch (err) {
+//     next(err);
+//   }
+// });
+
 router.post("/", async (req, res, next) => {
   try {
+    //await to make sure we have info for use next time
     const newStudent = await Student.create(req.body);
-    res.json(newStudent);
+    //create test to go in our 'test' model in our 'study-saturdays' database
+    const test = await Test.create({
+      subject: "English",
+      grade: 88,
+      studentId: newStudent.id
+    });
+    //findById() is deprecated... so we can use findOne by findByPk()
+    //in our query, create association between student and table models
+    //note: https://sequelizedocs.fullstackacademy.com/eager-loading/
+    const newStudentTest = await Student.findByPk(newStudent.id, {include: [{model: Test}]});
+    res.json(newStudentTest); //res.json allows null and defined, whereas res.send will not
+    //our newStudentTest will be our newStudent object, but also include test
   } catch (err) {
+    //if there's error, move on to next route
     next(err);
   }
 });
