@@ -56,7 +56,7 @@ router.post("/", async (req, res, next) => {
       grade: 88,
       studentId: newStudent.id
     });
-    //findById() is deprecated... so we can use findOne by findByPk()
+    //findById() is deprecated... so we can use findOne by findByPk() (aka Primary Key)
     //in our query, create association between student and table models
     //note: https://sequelizedocs.fullstackacademy.com/eager-loading/
     const newStudentTest = await Student.findByPk(newStudent.id, {include: [{model: Test}]});
